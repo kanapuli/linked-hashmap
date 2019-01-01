@@ -1,0 +1,6 @@
+[package]
+name = "hashmap"
+version = "0.1.0"
+authors = ["puli <athavan@exotel.in>"]
+
+[dependencies]
