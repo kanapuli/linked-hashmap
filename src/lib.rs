@@ -20,6 +20,11 @@ impl <K, V> HashMap<K,V>
 
 impl <K, V> HashMap<K,V>
 where K: Hash  + Eq {
+    fn bucket(&self, key: &K) -> usize{
+        let mut hasher =  DefaultHasher::new();
+        key.hash(&mut hasher);
+        (hasher.finish() % self.buckets.len() as u64) as usize
+    }
     pub fn insert(&mut self, key: K, value: V) -> Option<V>{
     
         if self.buckets.is_empty() || self.items > 3 * self.buckets.len()/4 {
@@ -27,10 +32,7 @@ where K: Hash  + Eq {
             //call resize
             self.resize();
         }
-
-        let mut hasher =  DefaultHasher::new();
-        key.hash(&mut hasher);
-        let bucket = (hasher.finish() % self.buckets.len() as u64) as usize ;
+        let bucket = self.bucket(&key);
         let bucket = &mut self.buckets[bucket];
         for &mut (ref ekey,ref mut evalue) in  bucket.iter_mut() {
             //the given key exists already in the hashmap
@@ -42,7 +44,13 @@ where K: Hash  + Eq {
         bucket.push((key,value));
         None 
     }
-
+    pub fn get(&self, key: &K) -> Option<&V> {
+        let bucket = self.bucket(key);
+        self.buckets[bucket]
+            .iter()
+            .find(|&(ref ekey, _)| ekey == key)
+            .map(|&( _, ref evalue)| evalue)
+    }
     fn resize(&mut self){
         let target_size = match self.buckets.len(){
             0 => INITIAL_BUCKET_SIZE,
@@ -71,5 +79,8 @@ mod tests {
     fn  insert(){
         let mut map = HashMap::new();
         map.insert("bar", 96);
+        //call get to cross verify
+        let value = map.get(&"bar");
+        assert_eq!(value, Some(&96));
     }
 }
