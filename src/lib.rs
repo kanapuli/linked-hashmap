@@ -34,6 +34,7 @@ where K: Hash  + Eq {
         }
         let bucket = self.bucket(&key);
         let bucket = &mut self.buckets[bucket];
+        self.items += 1;
         for &mut (ref ekey,ref mut evalue) in  bucket.iter_mut() {
             //the given key exists already in the hashmap
             if ekey == &key {
@@ -50,6 +51,12 @@ where K: Hash  + Eq {
             .iter()
             .find(|&(ref ekey, _)| ekey == key)
             .map(|&( _, ref evalue)| evalue)
+    }
+    pub fn remove(&mut self, key: &K) -> Option<V>{
+        let bucket = self.bucket(key);
+        let bucket = &mut self.buckets[bucket];
+        let index = bucket.iter().position(|&(ref ekey, _)| ekey == key )?;
+        Some(bucket.swap_remove(index).1)
     }
     fn resize(&mut self){
         let target_size = match self.buckets.len(){
@@ -80,7 +87,9 @@ mod tests {
         let mut map = HashMap::new();
         map.insert("bar", 96);
         //call get to cross verify
-        let value = map.get(&"bar");
-        assert_eq!(value, Some(&96));
+        assert_eq!(map.get(&"bar"), Some(&96));
+        let removed_val = map.remove(&"bar");
+        assert_eq!(removed_val , Some(96));
+        assert_eq!(map.get(&"bar"), None);
     }
 }
