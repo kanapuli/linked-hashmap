@@ -56,7 +56,11 @@ where K: Hash  + Eq {
         let bucket = self.bucket(key);
         let bucket = &mut self.buckets[bucket];
         let index = bucket.iter().position(|&(ref ekey, _)| ekey == key )?;
+        self.items -= 1;
         Some(bucket.swap_remove(index).1)
+    }
+    pub fn len(&self) -> usize {
+        self.items
     }
     fn resize(&mut self){
         let target_size = match self.buckets.len(){
@@ -88,6 +92,7 @@ mod tests {
         map.insert("bar", 96);
         //call get to cross verify
         assert_eq!(map.get(&"bar"), Some(&96));
+        assert_eq!(map.len(), 1);
         let removed_val = map.remove(&"bar");
         assert_eq!(removed_val , Some(96));
         assert_eq!(map.get(&"bar"), None);
