@@ -1,5 +1,6 @@
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use std::mem;
 
 const INITIAL_NBUCKETS: usize = 1;
 //HashMap is the list of Buckets
@@ -21,7 +22,6 @@ where
     }
     //insert inserts a bucket into Linked HashMap
     pub fn insert(&mut self, key: K, value: V) -> Option<V> {
-
         if self.buckets.is_empty() || self.items > 3 * self.buckets.len() / 4 {
             self.resize()
         }
@@ -37,7 +37,6 @@ where
         for &mut (ref ekey, ref mut evalue) in bucket.iter_mut() {
             if ekey == &key {
                 // if the key exists already, replace the existing value
-                use std::mem;
                 //return the existing value
                 return Some(mem::replace(evalue, value));
             }
@@ -52,7 +51,16 @@ where
             0 => INITIAL_NBUCKETS,
             n => 2 * n,
         };
-        //TODO:
+        let mut new_buckets = Vec::with_capacity(target_size);
+        new_buckets.extend((0..target_size).map(|_| Vec::new()));
+        //get rid of all the things in  current vec
+        for (key, val) in self.buckets.iter_mut().flat_map(|bucket| bucket.drain(..)) {
+            let mut hasher = DefaultHasher::new();
+            key.hash(&mut hasher);
+            let bucket: usize = (hasher.finish() % new_buckets.len() as u64) as usize;
+            new_buckets[bucket].push((key, val));
+        }
+        mem::replace(&mut self.buckets, new_buckets);
     }
 }
 
