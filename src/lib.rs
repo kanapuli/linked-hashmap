@@ -7,3 +7,11 @@ struct Bucket<K,V> {
 pub struct HashMap<K,V> {
     buckets: Vec<Bucket<K,V>>
 }
+
+impl<K,V> HashMap<K,V> {
+    pub fn new() -> Self {
+        HashMap{
+            buckets: Vec::new(),
+        }
+    }
+}
