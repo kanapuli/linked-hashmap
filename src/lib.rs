@@ -102,6 +102,8 @@ mod test {
     #[test]
     fn insert() {
         let mut map = HashMap::new();
+        assert_eq!(map.len(), 0);
+        assert_eq!(map.is_empty(), true);
         map.insert("foo", "bar");
         assert_eq!(map.get(&"foo"), Some(&"bar"));
         assert_eq!(map.remove(&"foo"), Some("bar"));
