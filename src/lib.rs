@@ -81,6 +81,6 @@ mod test {
     fn insert() {
         let mut map = HashMap::new();
         map.insert("foo", "bar");
-        //        assert!((map.get(&"foo")), Some(&"bar"));
+        assert_eq!(map.get(&"foo"), Some(&"bar"));
     }
 }
