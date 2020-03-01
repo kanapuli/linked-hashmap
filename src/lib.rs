@@ -114,6 +114,7 @@ mod test {
         map.insert("foo", "bar");
         assert_eq!(map.len(), 1);
         assert!(!map.is_empty());
+        assert!(map.contains_key(&"foo"));
         assert_eq!(map.get(&"foo"), Some(&"bar"));
         assert_eq!(map.remove(&"foo"), Some("bar"));
         assert_eq!(map.get(&"foo"), None);
