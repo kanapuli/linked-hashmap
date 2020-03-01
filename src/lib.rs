@@ -73,6 +73,17 @@ where
             .find(|&(ref ekey, _)| ekey == key)
             .map(|&(_, ref evalue)| evalue)
     }
+
+    pub fn remove(&mut self, key: &K) -> Option<V> {
+        let bucket = self.bucket(key);
+        let bucket = &mut self.buckets[bucket];
+        let i: usize = bucket.iter().position(|&(ref ekey, _)| ekey == key)?;
+        //swap_remove swaps the element at position i with the last element
+        //and truncates the last element from the vector
+        //This looks more performant because , otherwise every element has to be
+        //shifted one place up to fill up the removed position
+        Some(bucket.swap_remove(i).1)
+    }
 }
 
 #[cfg(test)]
