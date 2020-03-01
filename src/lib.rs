@@ -13,6 +13,13 @@ impl<K, V> HashMap<K, V>
 where
     K: Hash + Eq,
 {
+
+    fn bucket(&mut self, key: &K) -> usize {
+        let mut hasher = DefaultHasher::new();
+        key.hash(&mut hasher);
+        //hasher.finish() returns the hash value written so far
+        (hasher.finish() % self.buckets.len() as u64) as usize
+    }
     //new creates a  new hashMap
     pub fn new() -> Self {
         HashMap {
@@ -25,11 +32,7 @@ where
         if self.buckets.is_empty() || self.items > 3 * self.buckets.len() / 4 {
             self.resize()
         }
-
-        let mut hasher = DefaultHasher::new();
-        key.hash(&mut hasher);
-        //hasher.finish() returns the hash value written so far
-        let bucket: usize = (hasher.finish() % self.buckets.len() as u64) as usize;
+        let bucket = self.bucket(&key);
         let bucket = &mut self.buckets[bucket];
         self.items += 1;
         //ekey - existing key
@@ -67,7 +70,8 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    fn insert_test() {
+    #[test]
+    fn insert() {
         let mut map = HashMap::new();
         map.insert("foo", "bar");
     }
