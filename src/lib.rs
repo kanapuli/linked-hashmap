@@ -83,6 +83,13 @@ where
             .map(|&(_, ref evalue)| evalue)
     }
 
+    pub fn contains_key(&self, key: &K) -> bool {
+        let bucket = self.bucket(key);
+        self.buckets[bucket]
+            .iter()
+            .find(|&(ref ekey, _)| ekey == key)
+            .is_some()
+    }
     pub fn remove(&mut self, key: &K) -> Option<V> {
         let bucket = self.bucket(key);
         let bucket = &mut self.buckets[bucket];
@@ -103,8 +110,10 @@ mod test {
     fn insert() {
         let mut map = HashMap::new();
         assert_eq!(map.len(), 0);
-        assert_eq!(map.is_empty(), true);
+        assert!(map.is_empty());
         map.insert("foo", "bar");
+        assert_eq!(map.len(), 1);
+        assert!(!map.is_empty());
         assert_eq!(map.get(&"foo"), Some(&"bar"));
         assert_eq!(map.remove(&"foo"), Some("bar"));
         assert_eq!(map.get(&"foo"), None);
