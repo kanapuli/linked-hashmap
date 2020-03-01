@@ -13,7 +13,6 @@ impl<K, V> HashMap<K, V>
 where
     K: Hash + Eq,
 {
-
     fn bucket(&mut self, key: &K) -> usize {
         let mut hasher = DefaultHasher::new();
         key.hash(&mut hasher);
@@ -65,6 +64,14 @@ where
         }
         mem::replace(&mut self.buckets, new_buckets);
     }
+
+    pub fn get(&mut self, key: &K) -> Option<&V> {
+        let bucket = self.bucket(key);
+        self.buckets[bucket]
+            .iter()
+            .find(|&(ref ekey, _)| ekey == key)
+            .map(|&(_, ref evalue)| evalue)
+    }
 }
 
 #[cfg(test)]
@@ -74,5 +81,6 @@ mod test {
     fn insert() {
         let mut map = HashMap::new();
         map.insert("foo", "bar");
+        //        assert!((map.get(&"foo")), Some(&"bar"));
     }
 }
