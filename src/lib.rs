@@ -66,8 +66,13 @@ where
         mem::replace(&mut self.buckets, new_buckets);
     }
 
+    //returns the length of the HashMap
     pub fn len(&self) -> usize {
         self.items
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.items == 0
     }
 
     pub fn get(&self, key: &K) -> Option<&V> {
