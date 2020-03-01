@@ -66,6 +66,10 @@ where
         mem::replace(&mut self.buckets, new_buckets);
     }
 
+    pub fn len(&self) -> usize {
+        self.items
+    }
+
     pub fn get(&self, key: &K) -> Option<&V> {
         let bucket = self.bucket(key);
         self.buckets[bucket]
@@ -78,6 +82,7 @@ where
         let bucket = self.bucket(key);
         let bucket = &mut self.buckets[bucket];
         let i: usize = bucket.iter().position(|&(ref ekey, _)| ekey == key)?;
+        self.items -= 1;
         //swap_remove swaps the element at position i with the last element
         //and truncates the last element from the vector
         //This looks more performant because , otherwise every element has to be
