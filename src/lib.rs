@@ -94,5 +94,7 @@ mod test {
         let mut map = HashMap::new();
         map.insert("foo", "bar");
         assert_eq!(map.get(&"foo"), Some(&"bar"));
+        assert_eq!(map.remove(&"foo"), Some("bar"));
+        assert_eq!(map.get(&"foo"), None);
     }
 }
