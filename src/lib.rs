@@ -3,7 +3,8 @@ use std::hash::{Hash, Hasher};
 use std::mem;
 
 const INITIAL_NBUCKETS: usize = 1;
-//HashMap is the list of Buckets
+
+//HashMap is the list of Vectors
 pub struct HashMap<K, V> {
     buckets: Vec<Vec<(K, V)>>,
     items: usize,
@@ -13,7 +14,7 @@ impl<K, V> HashMap<K, V>
 where
     K: Hash + Eq,
 {
-    fn bucket(&mut self, key: &K) -> usize {
+    fn bucket(&self, key: &K) -> usize {
         let mut hasher = DefaultHasher::new();
         key.hash(&mut hasher);
         //hasher.finish() returns the hash value written so far
@@ -65,7 +66,7 @@ where
         mem::replace(&mut self.buckets, new_buckets);
     }
 
-    pub fn get(&mut self, key: &K) -> Option<&V> {
+    pub fn get(&self, key: &K) -> Option<&V> {
         let bucket = self.bucket(key);
         self.buckets[bucket]
             .iter()
