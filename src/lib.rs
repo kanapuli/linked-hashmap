@@ -101,6 +101,24 @@ where
     }
 }
 
+pub struct Iter<'a, K, V> {}
+
+
+impl<'a, K, V> Iter<'a, K, V> {
+    fn new(&'a HashMap<K, V>) -> Self {
+    
+    }
+}
+impl<'a, K, V> IntoIterator for &'a HashMap<K, V> {
+    //value that has to be yielded
+    type Item = (&'a K, &'a V);
+    // type of the iterator
+    type IntoIter = Iter<'a, K, V>;
+    fn into_iter(self) -> Self::IntoIter {
+        Iter::new(self)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
