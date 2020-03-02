@@ -83,13 +83,11 @@ where
             .map(|&(_, ref evalue)| evalue)
     }
 
+    // contains_key checks if a key is present
     pub fn contains_key(&self, key: &K) -> bool {
-        let bucket = self.bucket(key);
-        self.buckets[bucket]
-            .iter()
-            .find(|&(ref ekey, _)| ekey == key)
-            .is_some()
+        self.get(key).is_some()
     }
+
     pub fn remove(&mut self, key: &K) -> Option<V> {
         let bucket = self.bucket(key);
         let bucket = &mut self.buckets[bucket];
